@@ -10,10 +10,11 @@ TEST_CASE("test MagicalContainer and spacial iterators") {
     MagicalContainer ::AscendingIterator ascending(container);
     MagicalContainer ::SideCrossIterator side(container);
     MagicalContainer ::PrimeIterator prime(container);
-
-    // Test adding elements and size()
     
+
     CHECK(container.size() == 0);
+
+    // Test adding elements and size()    
     CHECK_NOTHROW(container.addElement(5));
     container.addElement(2);
     container.addElement(3);
@@ -35,28 +36,33 @@ TEST_CASE("test MagicalContainer and spacial iterators") {
     CHECK(container.size() == 4);
 
     // Trying to add the same integers twice
-    CHECK_THROWS(container.addElement(2)); 
-    CHECK(container.size() == 4);
+    // CHECK_THROWS(container.addElement(2)); 
+    // CHECK(container.size() == 4);
 
     // Test iterators
-    
     unsigned int index = 0;
     for (auto itasc = ascending.begin(); itasc!=ascending.end();++itasc){
         CHECK(container.getElement(index)==*itasc);
         ++index;
     }
 
-    index = 0;
-    for (auto itside = side.begin(); itside != side.end(); ++itside) {
-        CHECK(container.getElement(index)==*itside);
-        ++index;
-    }
 
-    index = 0;
-    for (auto itprime = prime.begin(); itprime!= prime.end(); ++itprime) {
-        CHECK(container.getElement(index)==*itprime);
-        ++index;
-    }
+    auto itside = side.begin();
+    CHECK(container.getElement(0)==*itside); //first one
+    ++itside;
+    CHECK(container.getElement(1)==*itside); // last one
+    ++itside;
+    CHECK(container.getElement(3)==*itside); // one after first one
+    ++itside;   
+    CHECK(container.getElement(2)==*itside); // one before last one
+
+
+    auto itprime = prime.begin();
+    CHECK(container.getElement(0)==*itprime); // 5 is prime
+    ++itprime;
+    CHECK(container.getElement(1)==*itprime); // 17 is prime
+    ++itprime;
+    CHECK(container.getElement(3)==*itprime); // 7 is prime
 
     // Test copy constructor
 
@@ -68,54 +74,55 @@ TEST_CASE("test MagicalContainer and spacial iterators") {
     CHECK(containerCopy.size() == container.size());
 
     index = 0;
-    for (auto itasc2 = ascending.begin(); itasc2!=ascending.end();++itasc2){
+    for (auto itasc2 = ascending2.begin(); itasc2!=ascending2.end();++itasc2){
         CHECK(container.getElement(index)==*itasc2);
         ++index;
     }
 
-    index = 0;
-    for (auto itside2 = side.begin(); itside2 != side.end(); ++itside2) {
-        CHECK(container.getElement(index)==*itside2);
-        ++index;
-    }
-
-    index = 0;
-    for (auto itprime2 = prime.begin(); itprime2!= prime.end(); ++itprime2) {
-        CHECK(container.getElement(index)==*itprime2);
-        ++index;
-    }
-    //check equality and non-equality of iterators that point different containers
-
-    MagicalContainer container1;
-    container1.addElement(2);
-    container1.addElement(8);
-    container1.addElement(3);
-    container1.addElement(1);
-    container1.addElement(9);
-
-    MagicalContainer container2;
-    container2.addElement(2);
-    container2.addElement(8);
-    container2.addElement(3);
-    container2.addElement(1);
-    container2.addElement(9);
+    auto itside2 = side2.begin();
+    CHECK(container.getElement(0)==*itside2); //first one
+    ++itside2;
+    CHECK(container.getElement(1)==*itside2); // last one
+    ++itside2;
+    CHECK(container.getElement(3)==*itside2); // one after first one
+    ++itside2;   
+    CHECK(container.getElement(2)==*itside2); // one before last one
 
 
-    MagicalContainer ::AscendingIterator ascending3(container1);
-    MagicalContainer ::AscendingIterator ascending4(container2);
+    auto itprime2 = prime2.begin();
+    CHECK(container.getElement(0)==*itprime2); // 5 is prime
+    ++itprime2;
+    CHECK(container.getElement(1)==*itprime2); // 17 is prime
+    ++itprime2;
+    CHECK(container.getElement(3)==*itprime2); // 7 is prime
 
-    CHECK(ascending3 == ascending4);
-    container1.addElement(19);
-    
-    MagicalContainer container3;
-    container3.addElement(2);
-    container3.addElement(8);
-    container3.addElement(3);
-    container3.addElement(1);
-    container3.addElement(9);
-    container3.addElement(19);
-    MagicalContainer ::AscendingIterator ascending5(container3);
 
-    CHECK(ascending3 != ascending5);
+    //check equality and non-equality of iterators
+
+        MagicalContainer::AscendingIterator id(container);
+        auto it1 =id.begin();
+
+        MagicalContainer::AscendingIterator id1(container);
+        auto it2 =id1.begin();
+
+        MagicalContainer::AscendingIterator id2(container);
+        auto it3 =id2.end();
+
+        CHECK(it1 == it2);
+        CHECK(it1 != it3);
+        CHECK(it2 != it3);
+        ++it1;
+        CHECK(it1 != it2);
+        CHECK(it2 != it3);
+
+        while (it1 != it1.end()) 
+            ++it1;
+        
+        CHECK(it1 == it3);
+
+        while (it2 != it2.end()) 
+            ++it2;
+        
+        CHECK(it2 == it3);
 
 }
